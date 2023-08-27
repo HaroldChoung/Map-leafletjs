@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Search and Markers Example</title>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+  <link rel="stylesheet" href="https://www.unpkg.com/leaflet-control-geocoder@2.4.0/dist/Control.Geocoder.css" />
+  <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+  <script src="https://unpkg.com/leaflet-control-geocoder@2.4.0/dist/Control.Geocoder.js"></script>
+  
+  <style type="text/css">
+  	/* Style for the table */
+table {
+  width: 60%;
+  border-collapse: collapse;
+  margin-top: 20px;
+  border: 1px solid #ccc;
+  margin-left:auto
+  margin-right:auto
+}
+
+/* Style for table header cells */
+th {
+  background-color: #f2f2f2;
+  border: 1px solid #ccc;
+  padding: 8px;
+  text-align: left;
+}
+
+/* Style for table data cells */
+td {
+  border: 1px solid #ccc;
+  padding: 8px;
+}
+
+/* Add some spacing to the first column (if needed) */
+td:first-child {
+  padding-left: 16px;
+}
+
+/* Alternate row background color */
+tr:nth-child(even) {
+  background-color: #f2f2f2;
+}
+
+/* Hover effect for table rows */
+tr:hover {
+  background-color: #e0e0e0;
+}
+input[type='text']{
+  padding:10px;
+  margin:10px;
+  border-radius:5px;
+  border: 2px solid #a5a5a5;
+}
+
+  </style>
+</head>
+<body>
+  <div id="map" style="height: 400px;"></div>
+  <div>
+    <label for="coordinate">Coordinate:</label>
+    <input type="text" id="coordinate" placeholder="Enter coordinates (lat, lng)" value="3.268631752790838, 101.6389155966445">
+    <label for="place">Place Name:</label>
+    <input type="text" id="place" placeholder="Enter place name" value="selayang">
+    <button id="addButton">Add Data</button>
+    <input id="toggleButton" type="button" value="Popup" onclick=""/>
+  </div>
+  <div>
+    <table id="coorTable">
+      <thead>
+        <tr>
+          <th>Marker</th>
+          <th>Coordinate</th>
+          <th>Place Name</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- Table rows will be added here -->
+      </tbody>
+    </table>
+  </div>
+
+  
+  <script>
+    var map = L.map('map').setView([3.1390, 101.6869], 9);
+    
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '© OpenStreetMap contributors'
+    }).addTo(map);
+    
+    var marker_index=1;
+    // Add search box
+    L.Control.geocoder().addTo(map);
+    var markers = new Array();
+
+    var addButton = document.getElementById("addButton");
+    var toggleButton = document.getElementById("toggleButton");
+    var coorTable = document.getElementById("coorTable").getElementsByTagName('tbody')[0];
+ 
+    map.on('dblclick', function(event) {
+    	console.log(event.latlng);
+      addMarker(event.latlng,'click',marker_index++);
+    });
+    map.on('moveend', function(event) {
+      var Input = document.querySelector(".leaflet-control-geocoder-form input").value;
+      addMarker(event.target._lastCenter,Input,marker_index++);
+    });
+
+    addButton.addEventListener("click", function() {
+      var coordinateInput = document.getElementById("coordinate");
+      var placeInput = document.getElementById("place");
+
+      var coordinate = coordinateInput.value;
+      var place = placeInput.value;
+
+      if (coordinate && place) {
+        // Add a new row to the table
+        
+
+        var coordinate_now = coordinate.split(",")
+        var lat = coordinate_now[0];
+        var lng = coordinate_now[1];
+
+        // Clear input fields
+        coordinateInput.value = "";
+        placeInput.value = "";
+        
+        console.log({lat,lng},"aaa");
+        addMarker({lat,lng},place,marker_index++)
+      }
+    });
+
+    toggleButton.addEventListener("click", function() {
+        console.log("Marker count: " +markers.length);
+        markers.forEach((m)=>{
+          console.log(m.getLatLng())
+        });
+    });
+
+    function addMarker(loglat,title,index){
+      var newRow = coorTable.insertRow(coorTable.rows.length);
+      var cell0 = newRow.insertCell(0);
+      var cell1 = newRow.insertCell(1);
+      var cell2 = newRow.insertCell(2);
+      cell0.innerHTML = index;
+      cell1.innerHTML = JSON.stringify(loglat);
+      cell2.innerHTML = title;
+
+
+      var icon = L.icon({
+          iconUrl: 'https://raw.githubusercontent.com/Concept211/Google-Maps-Markers/master/images/marker_blue'+index+'.png',
+          iconSize: [23, 38],
+      });
+      var marker = L.marker(loglat, {icon})
+        .addTo(map)
+        .bindPopup(title)
+        .openPopup();
+        console.log("mark",marker)
+        markers.push(marker)
+
+    }
+  </script>
+</body>
+</html>
