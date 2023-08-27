@@ -56,33 +56,39 @@ input[type='text']{
   </style>
 </head>
 <body>
-  <div id="map" style="height: 400px;"></div>
-  <div>
-    <label for="coordinate">Coordinate:</label>
-    <input type="text" id="coordinate" placeholder="Enter coordinates (lat, lng)" value="3.268631752790838, 101.6389155966445">
-    <label for="place">Place Name:</label>
-    <input type="text" id="place" placeholder="Enter place name" value="selayang">
-    <button id="addButton">Add Data</button>
-    <input id="toggleButton" type="button" value="Popup" onclick=""/>
-  </div>
-  <div>
-    <table id="coorTable">
-      <thead>
-        <tr>
-          <th>Marker</th>
-          <th>Coordinate</th>
-          <th>Place Name</th>
-        </tr>
-      </thead>
-      <tbody>
-        <!-- Table rows will be added here -->
-      </tbody>
-    </table>
+  <div style="display:flex">
+    <div>
+      <div id="map" style="height: 950px;width:900px"></div>
+    </div>
+    <div>
+      <div>
+        <label for="coordinate">Coordinate:</label>
+        <input type="text" id="coordinate" placeholder="Enter coordinates (lat, lng)" value="3.268631752790838, 101.6389155966445">
+        <label for="place">Place Name:</label>
+        <input type="text" id="place" placeholder="Enter place name" value="selayang">
+        <button id="addButton">Add Data</button>
+        <input id="toggleButton" type="button" value="Popup" onclick=""/>
+      </div>
+      <div>
+        <table id="coorTable">
+          <thead>
+            <tr>
+              <th>Marker</th>
+              <th>Coordinate</th>
+              <th>Place Name</th>
+            </tr>
+          </thead>
+          <tbody>
+            <!-- Table rows will be added here -->
+          </tbody>
+        </table>
+      </div>
+    </div>
   </div>
 
   
   <script>
-    var map = L.map('map').setView([3.1390, 101.6869], 9);
+    var map = L.map('map').setView([3.1390, 101.6869], 7);
     
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
       attribution: '© OpenStreetMap contributors'
@@ -101,10 +107,10 @@ input[type='text']{
     	console.log(event.latlng);
       addMarker(event.latlng,'click',marker_index++);
     });
-    map.on('moveend', function(event) {
-      var Input = document.querySelector(".leaflet-control-geocoder-form input").value;
-      addMarker(event.target._lastCenter,Input,marker_index++);
-    });
+    // map.on('moveend', function(event) {
+    //   var Input = document.querySelector(".leaflet-control-geocoder-form input").value;
+    //   addMarker(event.target._lastCenter,Input+"(Move)",marker_index++);
+    // });
 
     addButton.addEventListener("click", function() {
       var coordinateInput = document.getElementById("coordinate");
